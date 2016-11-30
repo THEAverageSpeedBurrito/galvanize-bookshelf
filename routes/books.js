@@ -3,7 +3,7 @@
 const express = require('express');
 const knex = require('../knex');
 const bodyParser = require('body-parser');
-const {camelizeKeys, decamelizeKeys} = require('humps');
+const {camelizeKeys} = require('humps');
 
 // eslint-disable-next-line new-cap
 const router = express.Router();
@@ -37,7 +37,6 @@ router.post('/', function(req, res, next) {
   var {title, author, genre, description, coverUrl } = req.body;
 
   knex('books').insert({
-    id: 9,
     title,
     genre,
     author,

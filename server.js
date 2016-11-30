@@ -7,8 +7,6 @@ if (process.env.NODE_ENV !== 'production') {
 const express = require('express');
 const app = express();
 
-app.disable('x-powered-by');
-
 const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser')
 const morgan = require('morgan');
@@ -33,20 +31,20 @@ const path = require('path');
 app.use(express.static(path.join('public')));
 
 // CSRF protection
-app.use((req, res, next) => {
-  if (/json/.test(req.get('Accept'))) {
-    return next();
-  }
-
-  res.sendStatus(406);
-});
+// app.use((req, res, next) => {
+//   if (/json/.test(req.get('Accept'))) {
+//     return next();
+//   }
+//
+//   res.sendStatus(406);
+// });
 
 const books = require('./routes/books');
 const favorites = require('./routes/favorites');
 const token = require('./routes/token');
 const users = require('./routes/users');
 
-app.use(books);
+app.use('/books', books);
 app.use(favorites);
 app.use(token);
 app.use(users);
@@ -69,13 +67,9 @@ app.use((err, _req, res, _next) => {
   res.sendStatus(500);
 });
 
-const port = process.env.PORT || 8000;
+const port = process.env.PORT || 5000;
 
-app.listen(port, () => {
-  if (app.get('env') !== 'test') {
-    // eslint-disable-next-line no-console
-    console.log('Listening on port', port);
-  }
-});
+
+app.listen(port);
 
 module.exports = app;

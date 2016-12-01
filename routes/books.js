@@ -3,7 +3,7 @@
 const express = require('express');
 const knex = require('../knex');
 const bodyParser = require('body-parser');
-const camelizeKeys = require('humps');
+const {camelizeKeys, decamelizeKeys} = require('humps');
 
 // eslint-disable-next-line new-cap
 const router = express.Router();

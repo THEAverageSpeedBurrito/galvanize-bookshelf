@@ -22,7 +22,8 @@ router.post('/', (req, res, next) => {
       last_name: lastName,
       email,
       hashed_password
-    }, '*').then((users) => {
+    }, '*')
+    .then((users) => {
       delete users[0].hashed_password;
       delete users[0].created_at;
       delete users[0].updated_at;

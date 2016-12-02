@@ -59,9 +59,11 @@ router.patch('/:id', function(req, res) {
     author,
     description,
     cover_url: coverUrl,
-  }, '*').where('id', index).then((books) => {
+  }, '*')
+  .where('id', index).then((books) => {
     res.send(camelizeKeys(books[0]));
-  }).catch((err) => {
+  })
+  .catch((err) => {
     res.send(err);
   });
 
@@ -73,14 +75,17 @@ router.delete('/:id', (req, res) => {
 
   knex('books')
   .where('id', index)
-  .then(function (books) {
+  .then((books) => {
     data = books;
     delete data[0].id;
     delete data[0].created_at;
     delete data[0].updated_at;
   });
 
-  knex('books').del().where('id', index).then(() => {
+  knex('books')
+  .del()
+  .where('id', index)
+  .then(() => {
     res.send(camelizeKeys(data[0]));
   });
 });

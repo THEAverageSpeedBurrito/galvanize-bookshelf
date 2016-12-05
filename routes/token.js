@@ -57,7 +57,7 @@ router.post('/', (req, res) => {
 
 router.delete('/', (req, res) => {
   token = false;
-  res.cookie('token', '');
+  res.clearCookie('token');
   res.send(true);
 });
 

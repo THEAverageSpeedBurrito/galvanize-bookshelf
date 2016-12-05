@@ -10,7 +10,9 @@ const router = express.Router();
 router.use(bodyParser.json());
 
 router.get('/', function(req, res, next) {
-    knex('books').orderBy('title').then((books) => {
+    knex('books')
+    .orderBy('title')
+    .then((books) => {
       res.send(camelizeKeys(books));
     }).catch((err) => {
       next(err);
@@ -19,18 +21,22 @@ router.get('/', function(req, res, next) {
 });
 
 router.get('/:id', function(req, res, next) {
-  if(isNaN(req.params.id)){
-    res.sendStatus(404);
-  }
   var id = parseInt(req.params.id);
 
-  knex('books').where('id', id).then((books) => {
+  if (Number.isNaN(req.params.id)){
+    return next();
+  }
+
+  knex('books')
+  .where('id', id)
+  .then((books) => {
     if(books.length > 0){
       res.send(camelizeKeys(books[0]));
     }else{
       res.sendStatus(404);
     }
-  }).catch((err) => {
+  })
+  .catch((err) => {
     next(err);
     res.send(err);
   });

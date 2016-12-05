@@ -38,7 +38,7 @@ router.post('/', (req, res) => {
                   token = true;
                   var jwToken = jwt.sign({firstName: user[0].namefirstName, lastName: user[0].lastName}, 'shhhhhh');
 
-                  res.cookie('/token', jwToken, {path: '/', httpOnly: true});
+                  res.cookie('token', jwToken, {path: '/', httpOnly: true});
 
                   delete user[0].hashed_password;
                   delete user[0].created_at;

@@ -19,13 +19,16 @@ router.get('/', function(req, res, next) {
 });
 
 router.get('/:id', function(req, res, next) {
+  if(isNaN(req.params.id)){
+    res.sendStatus(404);
+  }
   var id = parseInt(req.params.id);
 
   knex('books').where('id', id).then((books) => {
     if(books.length > 0){
       res.send(camelizeKeys(books[0]));
     }else{
-      res.send(`ID ${id} does not exist`);
+      res.sendStatus(404);
     }
   }).catch((err) => {
     next(err);
@@ -49,6 +52,10 @@ router.post('/', function(req, res, next) {
 });
 
 router.patch('/:id', function(req, res) {
+  res.set('Content-Type', 'text/plain');
+  if(isNaN(index)){
+    res.sendStatus(404);
+  }
   var index = parseInt(req.params.id);
 
   var{title, genre, author, description, coverUrl} = req.body;
@@ -61,6 +68,9 @@ router.patch('/:id', function(req, res) {
     cover_url: coverUrl,
   }, '*')
   .where('id', index).then((books) => {
+    if(books.length === 0) {
+      res.sendStatus(404);
+    }
     res.send(camelizeKeys(books[0]));
   })
   .catch((err) => {
@@ -70,12 +80,18 @@ router.patch('/:id', function(req, res) {
 });
 
 router.delete('/:id', (req, res) => {
+  if(isNaN(index)) {
+    res.sendStatus(404);
+  }
   var index = parseInt(req.params.id);
   var data;
 
   knex('books')
   .where('id', index)
   .then((books) => {
+    if(books.length === 0) {
+      res.sendStatus(404);
+    }
     data = books;
     delete data[0].id;
     delete data[0].created_at;

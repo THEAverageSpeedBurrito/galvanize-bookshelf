@@ -5,11 +5,13 @@
 const express = require('express');
 const knex = require('../knex');
 const bodyParser = require('body-parser');
-var {camelizeKeys, decamelizeKeys} = require('humps');
+const {camelizeKeys, decamelizeKeys} = require('humps');
+const cookieParser = require('cookie-parser');
 
 // eslint-disable-next-line new-cap
 const router = express.Router();
 router.use(bodyParser.json());
+router.use(cookieParser());
 
 // YOUR CODE HERE
 router.get('/', (req, res) => {
@@ -47,19 +49,22 @@ router.delete('/', (req, res) => {
 
   var tbd;
   knex('favorites').where('book_id', bookId).then((data) => {
-    tbd = data[0];
+    if(data.length > 0){
+      tbd = data;
+    }else{
+      res.send('No Books found');
+    }
   });
 
   knex('favorites').del().where('book_id', bookId).then(() => {
 
     if(tbd.length > 0){
-      delete tbd.created_at;
-      delete tbd.updated_at;
-      delete tbd.id;
+      delete tbd[0].created_at;
+      delete tbd[0].updated_at;
+      delete tbd[0].id;
 
-      res.send(tbd);
-    } else {
-      res.send('No books found');
+      res.set('Content-Type', 'application/json');
+      res.send(camelizeKeys(tbd[0]));
     }
 
   });

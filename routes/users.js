@@ -10,6 +10,7 @@ const {camelizeKeys, decamelizeKeys} = require('humps');
 const router = express.Router();
 
 router.use(bodyParser.json());
+
 // YOUR CODE HERE
 
 router.post('/', (req, res, next) => {

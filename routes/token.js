@@ -7,7 +7,9 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const knex = require('../knex');
+const {camelizeKeys, decamelizeKeys} = require('humps');
 const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
 // eslint-disable-next-line new-cap
 const router = express.Router();
 router.use(bodyParser.json());
@@ -23,23 +25,28 @@ router.get('/', (req, res) => {
 });
 
 router.post('/', (req, res) => {
+  res.set('Content-Type', 'text/plain');
 
     var {email, password} = req.body;
 
     if (email && password) {
         knex('users').where('email', email).then((user) => {
             if (user.length === 0) {
-                res.send('Bad email or password');
+              res.status(400).send('Bad email or password');
             } else {
                 if(bcrypt.compareSync(password, user[0].hashed_password)){
                   token = true;
+                  var jwToken = jwt.sign({firstName: user[0].namefirstName, lastName: user[0].lastName}, 'shhhhhh');
+
+                  res.cookie('/token', jwToken, {path: '/', httpOnly: true});
 
                   delete user[0].hashed_password;
                   delete user[0].created_at;
                   delete user[0].updated_at;
-                  res.send(user[0]);
+                  res.set('Content-Type', 'application/json');
+                  res.send(camelizeKeys(user[0]));
                 }else{
-                  res.send('Bad email or password');
+                  res.status(400).send('Bad email or password');
                 }
             }
         });
@@ -50,6 +57,7 @@ router.post('/', (req, res) => {
 
 router.delete('/', (req, res) => {
   token = false;
+  res.cookie('token', '');
   res.send(true);
 });
 
